@@ -1,15 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
+
+
+import SpacingGrid from '../components/Grid.js';
 
 
 
+export default function Main() {
+  const [cards, setCards] = useState([0, 1, 2]);
+  const [cardData, setCardData] = useState({});
 
-function Main() {
   return (
     <div className="Main">
-
-
+    <SpacingGrid
+    cards={cards}
+     />
     </div>
   );
 }
-
-export default Main;

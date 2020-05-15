@@ -1,0 +1,17 @@
+// variables
+
+$MainTheme:	#5b3964;
+
+
+
+// mixins
+
+@mixin gradient {
+  background: #42275a;  /* fallback for old browsers */
+  background: -webkit-linear-gradient(to right, #734b6d, #42275a) no-repeat center center fixed;
+  background: linear-gradient(to right, #734b6d, #42275a) no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
