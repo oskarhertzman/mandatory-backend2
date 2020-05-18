@@ -23,6 +23,11 @@ export const gridStyles = makeStyles((theme) => ({
     width: '30vh',
 
   },
+
+  inputName: {
+    visibility: 'hidden',
+    marginBottom: '50px',
+  },
   cardButton: {
     position: 'absolute',
     bottom: '0',
@@ -34,7 +39,8 @@ export const gridStyles = makeStyles((theme) => ({
   },
 
   listButton: {
-    
+    height: '50px',
+    marginTop: '30px',
   }
 
 }));
