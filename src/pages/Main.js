@@ -17,7 +17,7 @@ export default function Main() {
     axios.get(ENDPOINT)
     .then((response) => {
       console.log(response);
-      // setCards(response.data)
+      setCards(response.data.data)
     })
     .catch((err) => {
       console.log(err);

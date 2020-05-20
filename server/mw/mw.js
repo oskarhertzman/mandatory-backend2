@@ -2,7 +2,7 @@
 
 module.exports = {
 
-  json: function JSON (req, res, next) {
+  json: (req, res, next) => {
     if (req.is('json')) {
       let data = '';
       req.on('data', chunk => {
@@ -25,23 +25,23 @@ module.exports = {
     }
   },
 
-  log: function Log (req, res, next) {
+  log: (req, res, next) => {
     const reqStart = Date.now();
     const { hostname, method, path } = req;
     const { statusCode } = res;
     req.on("end", () => {
       console.log({
-          timestamp: Date.now(),
-          responseTime: Date.now() - reqStart + "ms",
-          hostname,
-          path,
-          method,
-          response: {
-            statusCode,
-          }
+        timestamp: Date.now(),
+        responseTime: Date.now() - reqStart + "ms",
+        hostname,
+        path,
+        method,
+        response: {
+          statusCode,
         }
-      );
-    })
-    next();
-  }
+      }
+    );
+  })
+  next();
+  },
 }

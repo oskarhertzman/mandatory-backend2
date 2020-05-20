@@ -11,12 +11,15 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
-
 import { gridStyles } from '../themes/themes.js';
+
+const axios = require('axios');
+const ENDPOINT = "http://localhost:8090/api";
 
 export default function SpacingGrid({cards}) {
 
   const [inputRefs, setInputRefs] = useState([]);
+  const [serverRef, setServerRef] = useState(false);
   const [list, setList] = useState(cards);
   const [listName, setListName] = useState();
   const [cardName, setCardName] = useState();
@@ -28,18 +31,35 @@ export default function SpacingGrid({cards}) {
 
 
   useEffect (() => {
+    console.log("hej");
     setInputRefs(inputRefs => (
-      Array(cards.length).fill().map((_, i) => inputRefs[i] || createRef())
+      Array(list.length).fill().map((_, i) => inputRefs[i] || createRef())
     ));
-  }, [cards])
+    if (serverRef) {
+      let data = JSON.stringify({
+        data: list
+      });
+      console.log(data);
+      axios.post(ENDPOINT, data, {
+        headers: {
+        'Content-Type': 'application/json; charset=UTF-8'
+      }})
+      .then(response => {
+        console.log(response);
+      })
+      .catch(err => {
+        console.log(err);
+      })
+    }
+  }, [list, serverRef])
 
 
   function addCard (e) {
     return e.current.style.visibility = 'visible';
   }
 
-  function newCard () {
-
+  function newCard (e) {
+    console.log(e.target.value);
   }
 
   function newList () {
@@ -50,6 +70,7 @@ export default function SpacingGrid({cards}) {
   function handleConfirm () {
     setList(prevState => [...prevState, {list: listName, uuid: uuidv4(), cards:[]}]);
     setListName('');
+    setServerRef(true);
     setOpen(false);
   }
 
@@ -70,7 +91,7 @@ export default function SpacingGrid({cards}) {
 
 
 
-
+console.log(list);
 
   return (
     <>
@@ -82,7 +103,17 @@ export default function SpacingGrid({cards}) {
               <Paper className={paper.paper}>
                 <p>{value.list}</p>
                 <form onSubmit={newCard} noValidate autoComplete="off">
-                  <TextField onChange={onCardName} className={paper.inputName} ref={inputRefs[index]} label="Name" />
+                  <TextField
+                    onChange={onCardName}
+                    className={paper.inputName}
+                    ref={inputRefs[index]}
+                    label="Name"
+                    onKeyPress={(ev) => {
+                      if (ev.key === 'Enter') {
+                        ev.preventDefault();
+                        newCard(ev);
+                      }
+                    }} />
                 </form>
                 <Button onClick={ () => addCard(inputRefs[index])} className={paper.cardButton}>Add new card</Button>
               </Paper>
