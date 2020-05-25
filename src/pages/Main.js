@@ -9,7 +9,7 @@ const ENDPOINT = "http://localhost:8090/api";
 
 
 export default function Main() {
-  const [cards, setCards] = useState([])
+  const [cards, setCards] = useState()
   const [cardData, setCardData] = useState({});
 
 
@@ -27,7 +27,7 @@ export default function Main() {
 
   return (
     <div className="Main">
-      {cards.length ?
+      {cards ?
         <SpacingGrid
         cards={cards}
       /> : null }

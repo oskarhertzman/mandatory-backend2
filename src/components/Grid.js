@@ -11,12 +11,14 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
+import Info from '../components/Info.js';
 import { gridStyles } from '../themes/themes.js';
 
 const axios = require('axios');
 const ENDPOINT = "http://localhost:8090/api";
 
 export default function SpacingGrid({cards}) {
+
 
   const [cardRefs, setCardRefs] = useState([]);
   const [inputRefs, setInputRefs] = useState([]);
@@ -26,9 +28,10 @@ export default function SpacingGrid({cards}) {
   const [cardName, setCardName] = useState();
   const [cardDesc, setCardDesc] = useState();
   const [cardDate, setCardDate] = useState();
+  const [selCard, setSelCard] = useState();
   const [open, setOpen] = React.useState(false);
   const paper = gridStyles();
-
+  const [openInfo, setOpenInfo] = useState(false);
 
 
   useEffect (() => {
@@ -72,7 +75,7 @@ export default function SpacingGrid({cards}) {
       let listCopy = list;
       for (let [index,card] of list.entries()) {
         if (card.uuid === id) {
-          card.cards.push({title: title})
+          card.cards.push({title: title, desc: '', date: new Date()})
           listCopy.splice(index, card)
           break;
         }
@@ -97,11 +100,17 @@ export default function SpacingGrid({cards}) {
       setOpen(false);
     };
 
-    function onListName (e) {
-      setListName(e.target.value);
+
+    function cardInfo (card) {
+      setSelCard(card);
+      setOpenInfo(true);
     }
 
 
+
+    function onListName (e) {
+      setListName(e.target.value);
+    }
 
     function onCardName (e) {
       setCardName(e.target.value)
@@ -117,56 +126,65 @@ export default function SpacingGrid({cards}) {
                 <Paper className={paper.paper}>
                   <p>{listItem.list}</p>
                   <div className={paper.cards}>
-                  {listItem.cards.map((card, index) => (
-                  <div className={paper.card} key={index}>{card.title}</div>
-                ))}
-              </div>
-                <form onSubmit={newCard} noValidate autoComplete="off">
-                  <TextField
-                    onChange={onCardName}
-                    className={paper.inputName}
-                    ref={inputRefs[index]}
-                    label="Name"
-                    onKeyPress={(ev) => {
-                      if (ev.key === 'Enter') {
-                        ev.preventDefault();
-                        newCard(ev, cardRefs[index]);
-                      }
-                    }} />
-                  </form>
-                  <Button onClick={ () => addCard(inputRefs[index])} className={paper.cardButton}>Add new card</Button>
-                </Paper>
-              </Grid>
-            ))}
-            <Button onClick={newList} className={paper.listButton}>Add new list</Button>
+                    {listItem.cards.map((card, index) => (
+                      <Paper elevation={1} className={paper.card} key={index}>
+                        <Button onClick={ () => cardInfo(card)} className={paper.cardButton}>{card.title}</Button>
+                      </Paper>
+                    ))}
+                  </div>
+                  <form onSubmit={newCard} noValidate autoComplete="off">
+                    <TextField
+                      onChange={onCardName}
+                      className={paper.inputName}
+                      ref={inputRefs[index]}
+                      label="Name"
+                      onKeyPress={(ev) => {
+                        if (ev.key === 'Enter') {
+                          ev.preventDefault();
+                          newCard(ev, cardRefs[index]);
+                        }
+                      }} />
+                    </form>
+                    <Button onClick={ () => addCard(inputRefs[index])} className={paper.addCard}>Add new card</Button>
+                  </Paper>
+                </Grid>
+              ))}
+              <Button onClick={newList} className={paper.listButton}>Add new list</Button>
+            </Grid>
           </Grid>
         </Grid>
-      </Grid>
-      <Dialog open={open} onClose={handleCancel || handleConfirm} aria-labelledby="form-dialog-title">
-        <DialogTitle id="form-dialog-title">New list</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Give your list a productive title that represents it's context.
-          </DialogContentText>
-          <TextField
-            onChange={onListName}
-            autoFocus
-            margin="dense"
-            id="name"
-            label="Title"
-            type="text"
-            fullWidth
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCancel} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={handleConfirm} color="primary">
-            Enter
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </>
-  );
-}
+        <Dialog open={open} onClose={handleCancel || handleConfirm} aria-labelledby="form-dialog-title">
+          <DialogTitle id="form-dialog-title">New list</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Give your list a productive title that represents it's context.
+            </DialogContentText>
+            <TextField
+              onChange={onListName}
+              autoFocus
+              margin="dense"
+              id="name"
+              label="Title"
+              type="text"
+              fullWidth
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCancel} color="primary">
+              Cancel
+            </Button>
+            <Button onClick={handleConfirm} color="primary">
+              Enter
+            </Button>
+          </DialogActions>
+        </Dialog>
+        {openInfo ?
+          <Info
+          data={selCard}
+          open={openInfo}
+          setOpen={setOpenInfo}
+        /> :
+          null }
+        </>
+      );
+    }
