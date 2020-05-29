@@ -57,22 +57,44 @@ export const gridStyles = makeStyles((theme) => ({
 export const infoStyles = makeStyles((theme) => ({
 
   root: {
-
+    width: '50vw',
+    height: '50vh',
   },
   content: {
     display: 'flex',
   },
 
   main: {
-  width: '80%',
+    width: '80%',
   },
 
-  desc: {
+  descTitle: {
     display: 'flex',
   },
 
+  descInput: {
+    width: '100%',
+  },
+
+  descBtnGroup: {
+    marginTop: '15px',
+  },
+
+  descSave: {
+    marginRight: '10px',
+  },
+
+  descClose: {
+    display: 'inlineFlex',
+    verticalAlign: 'middle',
+
+    '&:hover': {
+      cursor: 'pointer',
+    }
+  },
+
   aside: {
-  width: '20%',
+    width: '20%',
   }
 }))
 

@@ -29,7 +29,8 @@ export default function SpacingGrid({cards}) {
   const [cardDesc, setCardDesc] = useState();
   const [cardDate, setCardDate] = useState();
   const [selCard, setSelCard] = useState();
-  const [open, setOpen] = React.useState(false);
+  const [referance, setReferance] = useState();
+  const [open, setOpen] = useState(false);
   const paper = gridStyles();
   const [openInfo, setOpenInfo] = useState(false);
 
@@ -75,7 +76,7 @@ export default function SpacingGrid({cards}) {
       let listCopy = list;
       for (let [index,card] of list.entries()) {
         if (card.uuid === id) {
-          card.cards.push({title: title, desc: '', date: new Date()})
+          card.cards.push({title: title, desc: '', date: new Date(), uuid: uuidv4()})
           listCopy.splice(index, card)
           break;
         }
@@ -101,8 +102,9 @@ export default function SpacingGrid({cards}) {
     };
 
 
-    function cardInfo (card) {
+    function cardInfo (card, referance) {
       setSelCard(card);
+      setReferance(referance.uuid);
       setOpenInfo(true);
     }
 
@@ -128,7 +130,7 @@ export default function SpacingGrid({cards}) {
                   <div className={paper.cards}>
                     {listItem.cards.map((card, index) => (
                       <Paper elevation={1} className={paper.card} key={index}>
-                        <Button onClick={ () => cardInfo(card)} className={paper.cardButton}>{card.title}</Button>
+                        <Button onClick={ () => cardInfo(card, listItem)} className={paper.cardButton}>{card.title}</Button>
                       </Paper>
                     ))}
                   </div>
@@ -181,8 +183,10 @@ export default function SpacingGrid({cards}) {
         {openInfo ?
           <Info
           data={selCard}
+          setData={setSelCard}
           open={openInfo}
           setOpen={setOpenInfo}
+          referance={referance}
         /> :
           null }
         </>
