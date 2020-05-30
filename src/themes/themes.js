@@ -60,6 +60,34 @@ export const infoStyles = makeStyles((theme) => ({
     width: '50vw',
     height: '50vh',
   },
+
+  title: {
+  display: 'flex',
+  height: '64px',
+},
+
+  titleContainer: {
+    display: 'flex',
+  },
+
+
+  titleInput: {
+      height: '80%',
+
+  },
+
+  titleBtnGroup: {
+    marginLeft: '20px',
+    verticalAlign: 'middle',
+    display: 'flex',
+    alignItems: 'center',
+  },
+
+
+  titleSave: {
+    marginRight: '15px',
+  },
+
   content: {
     display: 'flex',
   },
@@ -95,7 +123,41 @@ export const infoStyles = makeStyles((theme) => ({
 
   aside: {
     width: '20%',
-  }
+    height: '100%',
+    borderLeft: '1px solid black',
+  },
+
+  asideHeader: {
+    display: 'flex',
+    justifyContent: 'center',
+  },
+
+  asideContent: {
+    display: 'flex',
+    flexDirection: 'column',
+
+    '& > div': {
+      margin: '20px',
+    }
+  },
+
+  date: {
+    display: 'flex',
+    alignItems: 'center',
+    position: 'absolute',
+    left: '0',
+    padding: theme.spacing(1),
+
+    '& > time': {
+      fontWeight: 'bold',
+    }
+  },
+
+  dateIcon: {
+    marginRight: '10px',
+    display: 'inlineFlex',
+    verticalAlign: 'middle',
+  },
 }))
 
 export const DialogContent = withStyles((theme) => ({

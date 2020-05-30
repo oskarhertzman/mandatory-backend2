@@ -28,7 +28,7 @@ export default function SpacingGrid({cards}) {
   const [cardName, setCardName] = useState();
   const [cardDesc, setCardDesc] = useState();
   const [cardDate, setCardDate] = useState();
-  const [selCard, setSelCard] = useState();
+  const [cardData, setCardData] = useState();
   const [referance, setReferance] = useState();
   const [open, setOpen] = useState(false);
   const paper = gridStyles();
@@ -43,6 +43,7 @@ export default function SpacingGrid({cards}) {
       Array(list.length).fill().map((_, i) => cardRefs[i] || createRef())
     ));
   }, [list])
+
 
 
   useEffect (() => {
@@ -70,7 +71,6 @@ export default function SpacingGrid({cards}) {
     }
 
     function newCard (e, cardRef) {
-      console.log("hej");
       let title = e.target.value;
       let id = cardRef.current.id;
       let listCopy = list;
@@ -103,7 +103,7 @@ export default function SpacingGrid({cards}) {
 
 
     function cardInfo (card, referance) {
-      setSelCard(card);
+      setCardData(card);
       setReferance(referance.uuid);
       setOpenInfo(true);
     }
@@ -182,8 +182,10 @@ export default function SpacingGrid({cards}) {
         </Dialog>
         {openInfo ?
           <Info
-          data={selCard}
-          setData={setSelCard}
+          data={cardData}
+          setData={setCardData}
+          list={list}
+          setList={setList}
           open={openInfo}
           setOpen={setOpenInfo}
           referance={referance}

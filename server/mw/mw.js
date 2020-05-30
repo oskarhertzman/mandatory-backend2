@@ -31,11 +31,11 @@ module.exports = {
     const { statusCode } = res;
     req.on("end", () => {
       console.log({
-        timestamp: Date.now(),
-        responseTime: Date.now() - reqStart + "ms",
         hostname,
-        path,
         method,
+        path,
+        responseTime: Date.now() - reqStart + "ms",
+        timestamp: Date.now(),
         response: {
           statusCode,
         }

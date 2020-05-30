@@ -11,8 +11,8 @@ const path = './db/lists.json';
 
 app.use(index);
 app.use(cors())
-// OBS! Not pre-made or imported middlewares, see ./mw/mw.js for referance.
 
+// OBS! Not pre-made or imported middlewares, see ./mw/mw.js for referance.
 app.use(mw.log);
 app.use(mw.json);
 
@@ -39,6 +39,13 @@ app.post('/api', (req, res) => {
 });
 
 app.put('/api', (req, res) => {
+  let data = req.body;
+  server.put(path, data, callback, error);
+  function callback () {
+  }
+
+  function error () {  
+  }
   return res.send('Received a PUT HTTP method');
 });
 
