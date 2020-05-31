@@ -1,13 +1,18 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, createRef } from 'react';
 import Moment from 'react-moment';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
+import Popover from '@material-ui/core/Popover';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import AccessTimeIcon from '@material-ui/icons/AccessTime';
 import CloseIcon from '@material-ui/icons/Close';
+import RepeatIcon from '@material-ui/icons/Repeat';
+import ClearIcon from '@material-ui/icons/Clear';
+import SwapHorizIcon from '@material-ui/icons/SwapHoriz';
 
-import { infoStyles, DialogContent, DialogActions, DialogTitle } from '../themes/themes.js';
+
+import { infoStyles, DialogContent, DialogSave, DialogTitle } from '../themes/themes.js';
 import usePrevious from '../utilities/prevState';
 
 const axios = require('axios');
@@ -20,10 +25,15 @@ export default function Info({data, setData, list, setList, open, setOpen, refer
   const [descEdit, setDescEdit] = useState(false);
   const [title, setTitle] = useState('');
   const [desc, setDesc] = useState('');
+  const [anchorEl, setAnchorEl] = useState(null);
   const editTitleRef = useRef('block');
   const editDescRef = useRef('block');
   const serverRef = useRef(false);
   const info = infoStyles();
+
+  const openAction = Boolean(anchorEl);
+  const idAction = open ? 'simple-popover' : undefined;
+
 
   useEffect (() => {
     let listCopy = list;
@@ -116,12 +126,26 @@ export default function Info({data, setData, list, setList, open, setOpen, refer
       setData(prevState => ({ ...prevState, desc: prevData.desc}));
     }
 
-    console.log(data);
+    function handleMove (e) {
+      setAnchorEl(e.currentTarget);
+    }
+
+    function handleCopy (e) {
+      setAnchorEl(e.currentTarget);
+    }
+
+    function handleDelete (e) {
+
+    }
+
+    function handleClosePop () {
+      setAnchorEl(null);
+    }
 
     return (
       <div>
         <Dialog
-          maxWidth="lg"
+          maxWidth="md"
           onClose={handleClose}
           aria-labelledby="customized-dialog-title"
           open={open}>
@@ -196,28 +220,46 @@ export default function Info({data, setData, list, setList, open, setOpen, refer
                       </Typography> }
                     </div>
                     <div>
-                      <h2>Date</h2>
+
                     </div>
                   </div>
                   <div className={info.aside}>
                     <div className={info.asideHeader}>
-                      <div>Actions</div>
+                      <div className={info.asideTitle}>Actions</div>
                     </div>
                     <div className={info.asideContent}>
-                      <div>Move</div>
-                      <div>Copy</div>
-                      <div>Delete</div>
+                      <div onClick={handleMove}><SwapHorizIcon />Move</div>
+                      <div onClick={handleCopy}><RepeatIcon />Copy</div>
+                      <div onClick={handleDelete}><ClearIcon />Delete</div>
                     </div>
                   </div>
-                </div>
-              </DialogContent>
-              <DialogActions>
-                <div className={info.date}><AccessTimeIcon className={info.dateIcon} /> <Moment format="YYYY/MM/DD HH:mm">{data.date}</Moment></div>
-                <Button autoFocus onClick={handleClose} color="primary">
-                  Save changes
-                </Button>
-              </DialogActions>
-            </Dialog>
-          </div>
-        );
-      }
+                  <div className={info.asideAction}>
+                    <Popover
+                      id={idAction}
+                      open={openAction}
+                      anchorEl={anchorEl}
+                      onClose={handleClosePop}
+                      anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'center',
+                      }}
+                      transformOrigin={{
+                        vertical: 'top',
+                        horizontal: 'center',
+                      }}
+                      >
+                        <Typography className={info.actionContent}>The content of the Popover.</Typography>
+                      </Popover>
+                    </div>
+                  </div>
+                </DialogContent>
+                <DialogSave>
+                  <div className={info.date}><AccessTimeIcon className={info.dateIcon} /> <Moment format="YYYY/MM/DD HH:mm">{data.date}</Moment></div>
+                  <Button autoFocus onClick={handleClose} color="primary">
+                    Save changes
+                  </Button>
+                </DialogSave>
+              </Dialog>
+            </div>
+          );
+        }

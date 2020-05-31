@@ -57,14 +57,14 @@ export const gridStyles = makeStyles((theme) => ({
 export const infoStyles = makeStyles((theme) => ({
 
   root: {
-    width: '50vw',
-    height: '50vh',
+    width: '35vw',
+    height: '25vh',
   },
 
   title: {
-  display: 'flex',
-  height: '64px',
-},
+    display: 'flex',
+    height: '64px',
+  },
 
   titleContainer: {
     display: 'flex',
@@ -72,7 +72,7 @@ export const infoStyles = makeStyles((theme) => ({
 
 
   titleInput: {
-      height: '80%',
+    height: '80%',
 
   },
 
@@ -90,6 +90,7 @@ export const infoStyles = makeStyles((theme) => ({
 
   content: {
     display: 'flex',
+    height: '100%',
   },
 
   main: {
@@ -122,24 +123,57 @@ export const infoStyles = makeStyles((theme) => ({
   },
 
   aside: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
     width: '20%',
     height: '100%',
     borderLeft: '1px solid black',
   },
 
   asideHeader: {
+    height: '15%',
     display: 'flex',
     justifyContent: 'center',
   },
 
+
+  asideTitle: {
+    display: 'flex',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    borderBottom: '1px solid grey',
+  },
+
   asideContent: {
+    height: '85%',
     display: 'flex',
     flexDirection: 'column',
+    justifyContent: 'space-around',
 
     '& > div': {
-      margin: '20px',
-    }
+      paddingLeft: '20px',
+      '& > svg': {
+        marginRight: '5px',
+        display: 'inlineFlex',
+        verticalAlign: 'middle',
+      },
+
+      '&:hover': {
+        cursor: 'pointer',
+      },
+    },
   },
+
+  asideAction: {
+
+
+  },
+
+  actionContent: {
+    padding: theme.spacing(2),
+  },
+
 
   date: {
     display: 'flex',
@@ -166,7 +200,7 @@ export const DialogContent = withStyles((theme) => ({
   },
 }))(MuiDialogContent);
 
-export const DialogActions = withStyles((theme) => ({
+export const DialogSave = withStyles((theme) => ({
   root: {
     margin: 0,
     padding: theme.spacing(1),
