@@ -48,6 +48,7 @@ export default function SpacingGrid({cards}) {
 
   useEffect (() => {
     if (serverRef) {
+      console.log(list);
       let data = JSON.stringify({
         data: list
       });
@@ -104,7 +105,7 @@ export default function SpacingGrid({cards}) {
 
     function cardInfo (card, referance) {
       setCardData(card);
-      setReferance(referance.uuid);
+      setReferance(referance);
       setOpenInfo(true);
     }
 
@@ -117,6 +118,8 @@ export default function SpacingGrid({cards}) {
     function onCardName (e) {
       setCardName(e.target.value)
     }
+
+
 
     return (
       <>
@@ -189,6 +192,8 @@ export default function SpacingGrid({cards}) {
           open={openInfo}
           setOpen={setOpenInfo}
           referance={referance}
+          postRef={serverRef}
+          setPostRef={setServerRef}
         /> :
           null }
         </>

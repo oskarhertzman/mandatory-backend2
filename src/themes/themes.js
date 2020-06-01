@@ -171,9 +171,29 @@ export const infoStyles = makeStyles((theme) => ({
   },
 
   actionContent: {
+    height: '200px',
+    width: '250px',
     padding: theme.spacing(2),
   },
 
+  actionHeader: {
+    textAlign: 'center',
+  },
+
+
+  actionBody: {
+    paddingTop: '20px',
+
+    '& > div': {
+      width: '40%',
+      paddingRight:'20px',
+    }
+  },
+
+  actionSubmit: {
+    display: 'block',
+    marginTop: '20px',
+  },
 
   date: {
     display: 'flex',

@@ -1,10 +1,15 @@
 import React, { useState, useEffect, useRef, createRef } from 'react';
 import Moment from 'react-moment';
+
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
+import FormControl from '@material-ui/core/FormControl';
+import InputLabel from '@material-ui/core/InputLabel';
+import NativeSelect from '@material-ui/core/NativeSelect';
 import Popover from '@material-ui/core/Popover';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
+
 import AccessTimeIcon from '@material-ui/icons/AccessTime';
 import CloseIcon from '@material-ui/icons/Close';
 import RepeatIcon from '@material-ui/icons/Repeat';
@@ -18,7 +23,8 @@ import usePrevious from '../utilities/prevState';
 const axios = require('axios');
 const ENDPOINT = "http://localhost:8090/api";
 
-export default function Info({data, setData, list, setList, open, setOpen, referance}) {
+export default function Info({data, setData, list, setList, open, setOpen, referance, postRef, setPostRef}) {
+
 
   const prevData = usePrevious(data)
   const [titleEdit, setTitleEdit] = useState(false);
@@ -26,8 +32,12 @@ export default function Info({data, setData, list, setList, open, setOpen, refer
   const [title, setTitle] = useState('');
   const [desc, setDesc] = useState('');
   const [anchorEl, setAnchorEl] = useState(null);
+  const [disablePos, setDisablePos] = useState(true);
+  const [selectedList, setSelectedList] = useState({cards: []});
+  const [selectedPos, setSelectedPos] = useState('');
   const editTitleRef = useRef('block');
   const editDescRef = useRef('block');
+  const popupRef = useRef('');
   const serverRef = useRef(false);
   const info = infoStyles();
 
@@ -38,7 +48,7 @@ export default function Info({data, setData, list, setList, open, setOpen, refer
   useEffect (() => {
     let listCopy = list;
     for (let [i,cards] of listCopy.entries()) {
-      if (referance === cards.uuid) {
+      if (referance.uuid === cards.uuid) {
         for (let [j,card] of cards.cards.entries()) {
           if (data.uuid === card.uuid) {
             listCopy[i].cards[j] = data;
@@ -55,7 +65,7 @@ export default function Info({data, setData, list, setList, open, setOpen, refer
       serverRef.current = false;
       let JSONdata = JSON.stringify({
         data: data,
-        referance: referance,
+        referance: referance.uuid,
       });
       axios.put(ENDPOINT, JSONdata, {
         headers: {
@@ -68,7 +78,7 @@ export default function Info({data, setData, list, setList, open, setOpen, refer
           console.log(err);
         })
       }
-    }, [data, serverRef])
+    }, [data, serverRef, referance.uuid])
 
 
     function handleClose () {
@@ -102,7 +112,7 @@ export default function Info({data, setData, list, setList, open, setOpen, refer
       editTitleRef.current = 'block';
       setTitleEdit(false);
       setData(prevState => ({ ...prevState, title: title}));
-      // serverRef.current = true;
+      serverRef.current = true;
     }
 
     function handleDescSave () {
@@ -126,21 +136,57 @@ export default function Info({data, setData, list, setList, open, setOpen, refer
       setData(prevState => ({ ...prevState, desc: prevData.desc}));
     }
 
-    function handleMove (e) {
+    function onMove (e) {
+      popupRef.current = 'move';
       setAnchorEl(e.currentTarget);
     }
 
-    function handleCopy (e) {
+    function onCopy (e) {
+      popupRef.current = 'copy';
       setAnchorEl(e.currentTarget);
     }
 
-    function handleDelete (e) {
+    function onDelete (e) {
 
     }
 
     function handleClosePop () {
       setAnchorEl(null);
     }
+
+    function onSelectList (e) {
+      let selected = e.target.value;
+      let listCopy = list;
+      for (let [i,cards] of listCopy.entries()) {
+        if (selected === cards.uuid) {
+            setSelectedList(cards);
+        }
+      }
+      setDisablePos(false);
+    }
+
+    function onSelectPos (e) {
+      let selected = e.target.value;
+      setSelectedPos(selected);
+    }
+
+
+    function handleMove (selList, selPos) {
+
+
+      if (selList.cards.length > 0 && selPos) {
+        for (let [index, cards] of referance.cards.entries()) {
+          if (data.uuid === cards.uuid) {
+            referance.cards.splice(index, 1);
+            break;
+          }
+        }
+        selList.cards.splice(selPos, 0, data)
+        setPostRef(true);
+      }
+    }
+
+console.log(list);
 
     return (
       <div>
@@ -228,9 +274,9 @@ export default function Info({data, setData, list, setList, open, setOpen, refer
                       <div className={info.asideTitle}>Actions</div>
                     </div>
                     <div className={info.asideContent}>
-                      <div onClick={handleMove}><SwapHorizIcon />Move</div>
-                      <div onClick={handleCopy}><RepeatIcon />Copy</div>
-                      <div onClick={handleDelete}><ClearIcon />Delete</div>
+                      <div onClick={onMove}><SwapHorizIcon />Move</div>
+                      <div onClick={onCopy}><RepeatIcon />Copy</div>
+                      <div onClick={onDelete}><ClearIcon />Delete</div>
                     </div>
                   </div>
                   <div className={info.asideAction}>
@@ -247,8 +293,55 @@ export default function Info({data, setData, list, setList, open, setOpen, refer
                         vertical: 'top',
                         horizontal: 'center',
                       }}
-                      >
-                        <Typography className={info.actionContent}>The content of the Popover.</Typography>
+                      >{popupRef.current === 'move' ?
+                      <Typography className={info.actionContent}>
+                        <div className={info.actionHeader}>
+                          Move Card
+                        </div>
+                        <div className={info.actionBody}>
+                          <p>Path</p>
+                          <FormControl>
+                            <InputLabel htmlFor="demo-customized-select-native">List</InputLabel>
+                            <NativeSelect
+                              id="demo-customized-select-native"
+                              onChange={onSelectList}
+                              required
+                              >
+                                <option aria-label="None" value="" />
+                                {list.map((listName, index) => (
+                                  listName.uuid !== referance.uuid ?
+                                  <option key={index} value={listName.uuid}>{listName.list}</option> :
+                                  null
+                                ))}
+                              </NativeSelect>
+                            </FormControl>
+                            <FormControl >
+                              <InputLabel htmlFor="demo-customized-select-native">Position</InputLabel>
+                              <NativeSelect
+                                required
+                                id="demo-customized-select-native"
+                                onChange={onSelectPos}
+                                disabled={disablePos}
+                                >
+                                  <option aria-label="None" value="" />
+                                  {selectedList.cards.map((listPos, index) => (
+                                    <option key={index} value={index + 1}>{index + 1}</option>
+                                  ))}
+                                </NativeSelect>
+                              </FormControl>
+                              <Button
+                                onClick={() => handleMove(selectedList, selectedPos)}
+                                className={info.actionSubmit}
+                                variant="contained"
+                                color="secondary">
+                                Move
+                              </Button>
+                          </div>
+                        </Typography> :
+
+
+
+                        <Typography className={info.actionContent}>The content of the Popover.</Typography> }
                       </Popover>
                     </div>
                   </div>
