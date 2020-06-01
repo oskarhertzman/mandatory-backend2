@@ -13,13 +13,15 @@ app.use(index);
 app.use(cors())
 
 // OBS! Not pre-made or imported middlewares, see ./mw/mw.js for referance.
+///////////////
 app.use(mw.log);
 app.use(mw.json);
+///////////////
 
-app.get('/api', (req, res, next) => {
+app.get('/api', (req, res) => {
   server.get(path, callback, error);
   function callback (data) {
-    return res.send(data);
+    return res.status(200).send(data);
   }
   function error () {
     return res.status(500).end();
@@ -30,27 +32,33 @@ app.post('/api', (req, res) => {
   let data = req.body
   server.post(path, data, callback, error);
   function callback () {
-    return res.send('OK');
+    return res.status(201).end();
   }
   function error () {
     return res.status(500).end();
   }
-
 });
 
 app.put('/api', (req, res) => {
   let data = req.body;
   server.put(path, data, callback, error);
   function callback () {
+      return res.status(201).end();
   }
-
-  function error () {  
+  function error () {
+    return res.status(500).end();
   }
-  return res.send('Received a PUT HTTP method');
 });
 
 app.delete('/api', (req, res) => {
-  return res.send('Received a DELETE HTTP method');
+  let data = req.body;
+  server.delete(path, data, callback, error);
+  function callback () {
+    return res.status(202).end();
+  }
+  function error () {
+    return res.status(500).end();
+  }
 });
 
 

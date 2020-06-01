@@ -37,12 +37,28 @@ export const gridStyles = makeStyles((theme) => ({
   cardButton: {
     width: '100%',
   },
+
+  options: {
+  height: '30px',
+  position: 'relative',
+  },
   addCard: {
     position: 'absolute',
     bottom: '0',
     color: MainTheme,
     fontWeight: 'bold',
   },
+
+  deleteList: {
+    position: 'absolute',
+    right: '0',
+    display: 'block',
+
+    '&:hover': {
+      cursor: 'pointer',
+    },
+  },
+
   control: {
     padding: theme.spacing(2),
   },

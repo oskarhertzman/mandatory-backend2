@@ -40,7 +40,9 @@ module.exports = {
     })
   },
 
-  delete: function Delete (path, callback) {
-
+  delete: function Delete (path, data, callback, error) {
+    fsp.readFile(path).then(fileData => {
+      callback();
+    })
   }
 }

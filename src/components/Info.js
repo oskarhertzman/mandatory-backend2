@@ -183,6 +183,7 @@ export default function Info({data, setData, list, setList, open, setOpen, refer
         }
         selList.cards.splice(selPos, 0, data)
         setPostRef(true);
+        setOpen(false);
       }
     }
 

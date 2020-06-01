@@ -10,8 +10,10 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 import Info from '../components/Info.js';
+import DeleteDialog from '../components/DeleteList.js';
 import { gridStyles } from '../themes/themes.js';
 
 const axios = require('axios');
@@ -24,6 +26,7 @@ export default function SpacingGrid({cards}) {
   const [inputRefs, setInputRefs] = useState([]);
   const [serverRef, setServerRef] = useState(false);
   const [list, setList] = useState(cards);
+  const [listDel, setListDel] = useState();
   const [listName, setListName] = useState();
   const [cardName, setCardName] = useState();
   const [cardDesc, setCardDesc] = useState();
@@ -33,6 +36,7 @@ export default function SpacingGrid({cards}) {
   const [open, setOpen] = useState(false);
   const paper = gridStyles();
   const [openInfo, setOpenInfo] = useState(false);
+  const [openDelete, setOpenDelete] = useState(false);
 
 
   useEffect (() => {
@@ -119,6 +123,10 @@ export default function SpacingGrid({cards}) {
       setCardName(e.target.value)
     }
 
+    function deleteList (selList) {
+      setListDel(selList);
+      setOpenDelete(true);
+    }
 
 
     return (
@@ -150,7 +158,17 @@ export default function SpacingGrid({cards}) {
                         }
                       }} />
                     </form>
-                    <Button onClick={ () => addCard(inputRefs[index])} className={paper.addCard}>Add new card</Button>
+                    <div className={paper.options}>
+                      <Button
+                        onClick={ () => addCard(inputRefs[index])}
+                        className={paper.addCard}>
+                        Add new card
+                      </Button>
+                      <DeleteIcon
+                        className={paper.deleteList}
+                        onClick={() => deleteList(listItem)}
+                      />
+                    </div>
                   </Paper>
                 </Grid>
               ))}
@@ -185,17 +203,26 @@ export default function SpacingGrid({cards}) {
         </Dialog>
         {openInfo ?
           <Info
-          data={cardData}
-          setData={setCardData}
-          list={list}
-          setList={setList}
-          open={openInfo}
-          setOpen={setOpenInfo}
-          referance={referance}
-          postRef={serverRef}
-          setPostRef={setServerRef}
-        /> :
+            data={cardData}
+            setData={setCardData}
+            list={list}
+            setList={setList}
+            open={openInfo}
+            setOpen={setOpenInfo}
+            referance={referance}
+            postRef={serverRef}
+            setPostRef={setServerRef}
+          /> :
           null }
-        </>
-      );
-    }
+          {openDelete ?
+            <DeleteDialog
+            list={list}
+            setList={setList}
+            target={listDel}
+            open={openDelete}
+            setOpen={setOpenDelete}
+            /> :
+            null }
+          </>
+        );
+      }
