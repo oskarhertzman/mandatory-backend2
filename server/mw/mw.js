@@ -26,22 +26,29 @@ module.exports = {
   },
 
   log: (req, res, next) => {
+
     const reqStart = Date.now();
-    const { hostname, method, path } = req;
-    const { statusCode } = res;
-    req.on("end", () => {
+    req.headers['if-none-match'] = 'no-match-for-this';
+    res.on('close', onResponse, console.log("close"));
+    res.on('finnish', onResponse, console.log("finnish"));
+
+    function onResponse () {
+      res.removeListener('close', onResponse);
+      res.removeListener('finnish', onResponse);
+
+      const { hostname, method, path } = req;
+      const { statusCode } = res;
+
       console.log({
         hostname,
         method,
         path,
         responseTime: Date.now() - reqStart + "ms",
         timestamp: Date.now(),
-        response: {
-          statusCode,
-        }
+        response: statusCode,
       }
     );
-  })
+  }
   next();
-  },
+},
 }

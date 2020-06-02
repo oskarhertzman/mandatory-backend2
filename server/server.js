@@ -9,14 +9,15 @@ const app = express();
 const port = process.env.PORT || 8090;
 const path = './db/lists.json';
 
-app.use(index);
-app.use(cors())
-
 // OBS! Not pre-made or imported middlewares, see ./mw/mw.js for referance.
 ///////////////
 app.use(mw.log);
 app.use(mw.json);
 ///////////////
+
+app.use(index)
+app.use(cors())
+
 
 app.get('/api', (req, res) => {
   server.get(path, callback, error);
@@ -54,7 +55,7 @@ app.delete('/api/:id', (req, res) => {
   let data = req.params.id.replace(/:/g,'')
   server.delete(path, data, callback, error);
   function callback () {
-    return res.status(202).end();
+      res.status(202).end();
   }
   function error () {
     return res.status(500).end();
