@@ -13,7 +13,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 
 import Info from '../components/Info.js';
 import DeleteDialog from '../components/DeleteList.js';
-import { gridStyles } from '../themes/themes.js';
+import { CssTextField, gridStyles } from '../themes/themes.js';
 
 const axios = require('axios');
 const ENDPOINT = "http://localhost:8090/api";
@@ -31,10 +31,11 @@ export default function SpacingGrid({cards}) {
   const [cardData, setCardData] = useState();
   const [referance, setReferance] = useState();
   const [open, setOpen] = useState(false);
-  const paper = gridStyles();
   const [openInfo, setOpenInfo] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
+  const addButtonDisplay = useRef(false);
 
+  const paper = gridStyles();
 
   // Effects
 
@@ -67,7 +68,7 @@ export default function SpacingGrid({cards}) {
       }
     }, [list, serverRef])
 
-  // Prop Listeners
+    // Prop Listeners
 
     function onListName (e) {
       setListName(e.target.value);
@@ -77,14 +78,22 @@ export default function SpacingGrid({cards}) {
       setCardName(e.target.value)
     }
 
-  // Handlers
+    // Handlers
 
     function handleAddCard (inputRef) {
-      return inputRef.current.style.visibility = 'visible';
+      if (addButtonDisplay.current) {
+        addButtonDisplay.current = false;
+        return inputRef.current.style.display = 'none';
+      }
+      else {
+        addButtonDisplay.current = true;
+        return inputRef.current.style.display = 'flex';
+      }
     }
 
-    function handleNewCard (e, cardRef) {
-      let title = e.target.value;
+    function handleNewCard (inputRef, cardRef) {
+      console.log("hi");
+      let title = cardName;
       let id = cardRef.current.id;
       let listCopy = list;
       for (let [index,card] of list.entries()) {
@@ -95,7 +104,9 @@ export default function SpacingGrid({cards}) {
         }
       }
       setList([...listCopy])
+      setListName('');
       setServerRef(true);
+      return inputRef.current.style.display = 'none';
     }
 
     function handleNewList () {
@@ -138,89 +149,103 @@ export default function SpacingGrid({cards}) {
                   <p>{listItem.list}</p>
                   <div className={paper.cards}>
                     {listItem.cards.map((card, index) => (
-                      <Paper elevation={1} className={paper.card} key={index}>
-                        <Button onClick={ () => handleCardInfo(card, listItem)} className={paper.cardButton}>{card.title}</Button>
-                      </Paper>
-                    ))}
-                  </div>
-                  <form onSubmit={handleNewCard} noValidate autoComplete="off">
-                    <TextField
-                      onChange={onCardName}
-                      className={paper.inputName}
-                      ref={inputRefs[index]}
-                      label="Name"
-                      onKeyPress={(ev) => {
-                        if (ev.key === 'Enter') {
-                          ev.preventDefault();
-                          handleNewCard(ev, cardRefs[index]);
-                        }
-                      }} />
-                    </form>
-                    <div className={paper.options}>
-                      <Button
-                        onClick={ () => handleAddCard(inputRefs[index])}
-                        className={paper.addCard}>
-                        Add new card
-                      </Button>
-                      <DeleteIcon
-                        className={paper.deleteList}
-                        onClick={() => handleDeleteList(listItem)}
-                      />
+                      <Paper
+                        elevation={2}
+                        className={paper.card}
+                        key={index}>
+                        <Button
+                          onClick={ () => handleCardInfo(card, listItem)}
+                          className={paper.cardButton}
+                          >
+                            {card.title}
+                          </Button>
+                        </Paper>
+                      ))}
                     </div>
-                  </Paper>
-                </Grid>
-              ))}
-              <Button onClick={handleNewList} className={paper.listButton}>Add new list</Button>
+                    <div
+                      className={paper.newCard}
+                      ref={inputRefs[index]}>
+                      <CssTextField
+                        onChange={onCardName}
+                        className={paper.inputName}
+                        label="Name"
+                      />
+                      <Button
+                        className={paper.inputConfirm}
+                        onClick={() => handleNewCard(inputRefs[index], cardRefs[index])}
+                        color='secondary'
+                        variant="contained"
+                        size="small"
+                        >
+                          Add card
+                        </Button>
+
+                      </div>
+                      <div className={paper.options}>
+                        <Button
+                          onClick={ () => handleAddCard(inputRefs[index])}
+                          className={paper.addCard}>
+                          Add new card
+                        </Button>
+                        <DeleteIcon
+                          className={paper.deleteList}
+                          onClick={() => handleDeleteList(listItem)}
+                        />
+                      </div>
+                    </Paper>
+                  </Grid>
+                ))}
+                <Button onClick={handleNewList} className={paper.listButton}>Add new list</Button>
+              </Grid>
             </Grid>
           </Grid>
-        </Grid>
-        <Dialog open={open} onClose={handleCancel || handleConfirm} aria-labelledby="form-dialog-title">
-          <DialogTitle id="form-dialog-title">New list</DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-              Give your list a productive title that represents it's context.
-            </DialogContentText>
-            <TextField
-              onChange={onListName}
-              autoFocus
-              margin="dense"
-              id="name"
-              label="Title"
-              type="text"
-              fullWidth
-            />
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleCancel} color="primary">
-              Cancel
-            </Button>
-            <Button onClick={handleConfirm} color="primary">
-              Enter
-            </Button>
-          </DialogActions>
-        </Dialog>
-        {openInfo ?
-          <Info
-            data={cardData}
-            setData={setCardData}
-            list={list}
-            setList={setList}
-            open={openInfo}
-            setOpen={setOpenInfo}
-            referance={referance}
-            postRef={serverRef}
-            setPostRef={setServerRef}
-          /> :
-          null }
-          {openDelete ?
-            <DeleteDialog
-            list={list}
-            setList={setList}
-            target={listDel}
-            open={openDelete}
-            setOpen={setOpenDelete}
+          <Dialog open={open} onClose={handleCancel || handleConfirm} aria-labelledby="form-dialog-title">
+            <DialogTitle id="form-dialog-title">New list</DialogTitle>
+            <DialogContent>
+              <DialogContentText>
+                Give your list a productive title that represents it's context.
+              </DialogContentText>
+              <TextField
+                onChange={onListName}
+                autoFocus
+                margin="dense"
+                id="name"
+                label="Title"
+                type="text"
+                fullWidth
+              />
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleCancel} color="primary">
+                Cancel
+              </Button>
+              <Button onClick={handleConfirm} color="primary">
+                Enter
+              </Button>
+            </DialogActions>
+          </Dialog>
+          {openInfo ?
+            <Info
+              data={cardData}
+              setData={setCardData}
+              list={list}
+              setList={setList}
+              open={openInfo}
+              setOpen={setOpenInfo}
+              referance={referance}
+              postRef={serverRef}
+              setPostRef={setServerRef}
             /> :
             null }
-          </>
-        );
-      }
+            {openDelete ?
+              <DeleteDialog
+                list={list}
+                setList={setList}
+                target={listDel}
+                open={openDelete}
+                setOpen={setOpenDelete}
+              /> :
+              null }
+            </>
+          );
+        }

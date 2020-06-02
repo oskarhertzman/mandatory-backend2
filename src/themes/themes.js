@@ -5,10 +5,14 @@ import MuiDialogContent from '@material-ui/core/DialogContent';
 import MuiDialogActions from '@material-ui/core/DialogActions';
 import MuiDialogTitle from '@material-ui/core/DialogTitle';
 import IconButton from '@material-ui/core/IconButton';
+import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 
-const MainTheme = '#5b3964;'
+export const MainTheme = '#5b3964;'
+export const SubTheme = '#ab4dc4';
+export const SubThemeHover ='#a631c4';
+export const GrayTheme = '#fcfcfc';
 
 export const gridStyles = makeStyles((theme) => ({
 
@@ -21,26 +25,56 @@ export const gridStyles = makeStyles((theme) => ({
   container: {
   },
   paper: {
+    backgroundColor: GrayTheme,
     position: 'relative',
     minHeight: '10vh',
     maxHeight: 'calc(100vh - 150px)',
     width: '30vh',
+
+    '& > p': {
+      color: MainTheme,
+      fontWeight: 'bold',
+      padding: theme.spacing(1),
+    }
   },
   card: {
     margin: '0 auto',
+    marginBottom: '10px',
     width: '90%',
+
   },
+
+  newCard: {
+    display: 'none',
+    alignItems: 'flex-end',
+    justifyContent: 'space-around',
+    marginBottom: '30px',
+  },
+
   inputName: {
-    visibility: 'hidden',
-    marginBottom: '50px',
+    width: '50%',
+  },
+
+  inputNameColor: {
+    color: SubTheme,
+  },
+
+  inputConfirm: {
+    backgroundColor: SubTheme,
+    margin: theme.spacing(0),
+    textAlign: 'center',
+    fontWeight: 'bold',
+    '&:hover': {
+      backgroundColor: SubThemeHover,
+    }
   },
   cardButton: {
     width: '100%',
   },
 
   options: {
-  height: '30px',
-  position: 'relative',
+    height: '30px',
+
   },
   addCard: {
     position: 'absolute',
@@ -50,9 +84,14 @@ export const gridStyles = makeStyles((theme) => ({
   },
 
   deleteList: {
+    color: MainTheme,
+    padding: '6px',
+    display: 'inlineFlex',
+    verticalAlign: 'middle',
     position: 'absolute',
     right: '0',
-    display: 'block',
+    bottom: '0',
+
 
     '&:hover': {
       cursor: 'pointer',
@@ -207,8 +246,12 @@ export const infoStyles = makeStyles((theme) => ({
   },
 
   actionSubmit: {
+    backgroundColor: SubTheme,
     display: 'block',
     marginTop: '20px',
+    '&:hover': {
+      backgroundColor: SubThemeHover,
+    },
   },
 
   date: {
@@ -230,6 +273,22 @@ export const infoStyles = makeStyles((theme) => ({
   },
 }))
 
+export const CssTextField = withStyles({
+  root: {
+    '& label.Mui-focused': {
+      color: SubTheme,
+    },
+    '& .MuiInput-underline:after': {
+      borderBottomColor: SubTheme,
+    },
+    '& .MuiOutlinedInput-root': {
+
+      '&.Mui-focused fieldset': {
+        borderColor: SubTheme,
+      },
+    },
+  },
+})(TextField);
 export const DialogContent = withStyles((theme) => ({
   root: {
     padding: theme.spacing(2),

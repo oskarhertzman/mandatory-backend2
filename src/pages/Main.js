@@ -10,7 +10,7 @@ const ENDPOINT = "http://localhost:8090/api";
 
 export default function Main() {
   const [cards, setCards] = useState()
-  const [cardData, setCardData] = useState({});
+
 
 
   useEffect(() => {
@@ -23,6 +23,7 @@ export default function Main() {
       console.log(err);
     })
   }, [])
+  
 
 
   return (

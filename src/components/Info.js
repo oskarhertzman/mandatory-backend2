@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, createRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Moment from 'react-moment';
 
 import Button from '@material-ui/core/Button';
@@ -8,7 +8,6 @@ import InputLabel from '@material-ui/core/InputLabel';
 import NativeSelect from '@material-ui/core/NativeSelect';
 import Popover from '@material-ui/core/Popover';
 import TextField from '@material-ui/core/TextField';
-import Typography from '@material-ui/core/Typography';
 
 import AccessTimeIcon from '@material-ui/icons/AccessTime';
 import CloseIcon from '@material-ui/icons/Close';
@@ -34,11 +33,12 @@ export default function Info({data, setData, list, setList, open, setOpen, refer
   const [anchorEl, setAnchorEl] = useState(null);
   const [disablePos, setDisablePos] = useState(true);
   const [selectedList, setSelectedList] = useState({cards: []});
-  const [selectedPos, setSelectedPos] = useState('');
+  const [selectedPos, setSelectedPos] = useState(1);
   const editTitleRef = useRef('block');
   const editDescRef = useRef('block');
   const popupRef = useRef('');
   const serverRef = useRef(false);
+  const listRef = useRef(false);
   const info = infoStyles();
 
   const openAction = Boolean(anchorEl);
@@ -110,11 +110,13 @@ export default function Info({data, setData, list, setList, open, setOpen, refer
     }
 
     function onSelectList (e) {
+      console.log("here");
       let selected = e.target.value;
       let listCopy = list;
-      for (let [i,cards] of listCopy.entries()) {
+      for (let cards of listCopy) {
         if (selected === cards.uuid) {
           setSelectedList(cards);
+          listRef.current = true;
         }
       }
       setDisablePos(false);
@@ -122,6 +124,7 @@ export default function Info({data, setData, list, setList, open, setOpen, refer
 
     function onSelectPos (e) {
       let selected = e.target.value;
+      console.log(selected);
       setSelectedPos(selected);
     }
 
@@ -133,11 +136,13 @@ export default function Info({data, setData, list, setList, open, setOpen, refer
 
     function handleTitleEdit () {
       editTitleRef.current = 'none';
+      setTitle(data.title)
       setTitleEdit(true);
     }
 
     function handleDescEdit () {
       editDescRef.current = 'none';
+      setDesc(data.desc);
       setDescEdit(true);
     }
 
@@ -174,7 +179,8 @@ export default function Info({data, setData, list, setList, open, setOpen, refer
     }
 
     function handleMove (selList, selPos) {
-      if (selList.cards.length > 0 && selPos) {
+      if (listRef.current && selPos) {
+        listRef.current = false;
         for (let [index, cards] of referance.cards.entries()) {
           if (data.uuid === cards.uuid) {
             referance.cards.splice(index, 1);
@@ -188,7 +194,7 @@ export default function Info({data, setData, list, setList, open, setOpen, refer
     }
 
     function handleCopy (selList, selPos) {
-      if (selList.cards.length > 0 && selPos) {
+      if (listRef.current && selPos) {
         selList.cards.splice(selPos, 0, data);
         setPostRef(true);
         setOpen(false);
@@ -220,6 +226,7 @@ export default function Info({data, setData, list, setList, open, setOpen, refer
                   onChange={onTitleChange}
                   InputProps={{ className: info.titleInput }}
                   placeholder=""
+                  value={title}
                 />
                 <div className={info.titleBtnGroup}>
                   <Button
@@ -241,7 +248,11 @@ export default function Info({data, setData, list, setList, open, setOpen, refer
                 onClose={handleClose}>
                 {data.title}
               </DialogTitle>}
-              <Button style={{display: editTitleRef.current}} onClick={handleTitleEdit}>Edit</Button>
+              <Button
+                style={{display: editTitleRef.current}}
+                onClick={handleTitleEdit}>
+                Edit
+              </Button>
             </div>
             <DialogContent
               className={info.root}
@@ -251,7 +262,11 @@ export default function Info({data, setData, list, setList, open, setOpen, refer
                   <div>
                     <div className={info.descTitle}>
                       <h2>Description</h2>
-                      <Button style={{display: editDescRef.current}} onClick={handleDescEdit}>Edit</Button>
+                      <Button
+                        style={{display: editDescRef.current}}
+                        onClick={handleDescEdit}>
+                        Edit
+                      </Button>
                     </div>
                     {descEdit ?
                       <div className={info.descContainer}>
@@ -279,9 +294,9 @@ export default function Info({data, setData, list, setList, open, setOpen, refer
                         </div>
                       </div>
                       :
-                      <Typography gutterBottom>
+                      <div>
                         {data.desc}
-                      </Typography> }
+                      </div> }
                     </div>
                     <div>
                     </div>
@@ -311,7 +326,7 @@ export default function Info({data, setData, list, setList, open, setOpen, refer
                         horizontal: 'center',
                       }}
                       >{popupRef.current === 'move' ?
-                      <Typography className={info.actionContent}>
+                      <div className={info.actionContent}>
                         <div className={info.actionHeader}>
                           Move Card
                         </div>
@@ -340,10 +355,13 @@ export default function Info({data, setData, list, setList, open, setOpen, refer
                                 onChange={onSelectPos}
                                 disabled={disablePos}
                                 >
-                                  <option aria-label="None" value="" />
-                                  {selectedList.cards.map((listPos, index) => (
-                                    <option key={index} value={index + 1}>{index + 1}</option>
-                                  ))}
+
+                                  {selectedList.cards.length > 0 ?
+                                    selectedList.cards.map((listPos, index) => (
+                                      <option key={index} value={index + 1}>{index + 1}</option>
+                                    ))
+                                    : <option value="1">1</option> }
+
                                 </NativeSelect>
                               </FormControl>
                               <Button
@@ -354,10 +372,10 @@ export default function Info({data, setData, list, setList, open, setOpen, refer
                                 Move
                               </Button>
                             </div>
-                          </Typography> : null}
+                          </div> : null}
 
                           {popupRef.current === 'copy' ?
-                          <Typography className={info.actionContent}>
+                          <div className={info.actionContent}>
                             <div className={info.actionHeader}>
                               Copy Card
                             </div>
@@ -386,10 +404,11 @@ export default function Info({data, setData, list, setList, open, setOpen, refer
                                     onChange={onSelectPos}
                                     disabled={disablePos}
                                     >
-                                      <option aria-label="None" value="" />
-                                      {selectedList.cards.map((listPos, index) => (
+                                      {selectedList.cards.length > 0 ?
+                                      selectedList.cards.map((listPos, index) => (
                                         <option key={index} value={index + 1}>{index + 1}</option>
-                                      ))}
+                                      ))
+                                      : <option value="1">1</option> }
                                     </NativeSelect>
                                   </FormControl>
                                   <Button
@@ -397,14 +416,14 @@ export default function Info({data, setData, list, setList, open, setOpen, refer
                                     className={info.actionSubmit}
                                     variant="contained"
                                     color="secondary">
-                                    Move
+                                    Copy
                                   </Button>
                                 </div>
-                              </Typography>
+                              </div>
                               : null}
 
                               {popupRef.current === 'delete' ?
-                              <Typography className={info.actionContent}>
+                              <div className={info.actionContent}>
                                 <div className={info.actionHeader}>
                                   Delete Card
                                 </div>
@@ -418,7 +437,7 @@ export default function Info({data, setData, list, setList, open, setOpen, refer
                                     Delete
                                   </Button>
                                 </div>
-                              </Typography>
+                              </div>
                               : null}
                             </Popover>
                           </div>
