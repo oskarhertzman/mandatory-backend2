@@ -29,8 +29,8 @@ module.exports = {
 
     const reqStart = Date.now();
     req.headers['if-none-match'] = 'no-match-for-this';
-    res.on('close', onResponse, console.log("close"));
-    res.on('finnish', onResponse, console.log("finnish"));
+    res.on('close', onResponse);
+    res.on('finnish', onResponse);
 
     function onResponse () {
       res.removeListener('close', onResponse);
