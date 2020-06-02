@@ -50,8 +50,8 @@ app.put('/api', (req, res) => {
   }
 });
 
-app.delete('/api', (req, res) => {
-  let data = req.body;
+app.delete('/api/:id', (req, res) => {
+  let data = req.params.id.replace(/:/g,'')
   server.delete(path, data, callback, error);
   function callback () {
     return res.status(202).end();

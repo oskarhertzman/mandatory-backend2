@@ -42,7 +42,18 @@ module.exports = {
 
   delete: function Delete (path, data, callback, error) {
     fsp.readFile(path).then(fileData => {
-      callback();
+      let parsed = JSON.parse(fileData).data;
+      for (let [index,item] of parsed.entries()) {
+        if (data === item.uuid) {
+          parsed.splice(index, 1);
+          break;
+        }
+      }
+      fsp.writeFile(path, JSON.stringify({data: parsed})).then(data => {
+        callback()
+      }).catch(err => {
+        error();
+      })
     })
-  }
+  },
 }
