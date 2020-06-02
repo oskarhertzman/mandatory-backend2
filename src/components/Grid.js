@@ -1,6 +1,5 @@
-import React, {useState, useEffect, useRef, createRef} from 'react';
+import React, { useState, useEffect, useRef, createRef } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
@@ -29,8 +28,6 @@ export default function SpacingGrid({cards}) {
   const [listDel, setListDel] = useState();
   const [listName, setListName] = useState();
   const [cardName, setCardName] = useState();
-  const [cardDesc, setCardDesc] = useState();
-  const [cardDate, setCardDate] = useState();
   const [cardData, setCardData] = useState();
   const [referance, setReferance] = useState();
   const [open, setOpen] = useState(false);
@@ -38,6 +35,8 @@ export default function SpacingGrid({cards}) {
   const [openInfo, setOpenInfo] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
 
+
+  // Effects
 
   useEffect (() => {
     setInputRefs(inputRefs => (
@@ -47,8 +46,6 @@ export default function SpacingGrid({cards}) {
       Array(list.length).fill().map((_, i) => cardRefs[i] || createRef())
     ));
   }, [list])
-
-
 
   useEffect (() => {
     if (serverRef) {
@@ -70,12 +67,23 @@ export default function SpacingGrid({cards}) {
       }
     }, [list, serverRef])
 
+  // Prop Listeners
 
-    function addCard (inputRef) {
+    function onListName (e) {
+      setListName(e.target.value);
+    }
+
+    function onCardName (e) {
+      setCardName(e.target.value)
+    }
+
+  // Handlers
+
+    function handleAddCard (inputRef) {
       return inputRef.current.style.visibility = 'visible';
     }
 
-    function newCard (e, cardRef) {
+    function handleNewCard (e, cardRef) {
       let title = e.target.value;
       let id = cardRef.current.id;
       let listCopy = list;
@@ -90,10 +98,9 @@ export default function SpacingGrid({cards}) {
       setServerRef(true);
     }
 
-    function newList () {
+    function handleNewList () {
       setOpen(true);
     }
-
 
     function handleConfirm () {
       setList(prevState => [...prevState, {list: listName, uuid: uuidv4(), cards:[]}]);
@@ -107,23 +114,14 @@ export default function SpacingGrid({cards}) {
     };
 
 
-    function cardInfo (card, referance) {
+    function handleCardInfo (card, referance) {
       setCardData(card);
       setReferance(referance);
       setOpenInfo(true);
     }
 
 
-
-    function onListName (e) {
-      setListName(e.target.value);
-    }
-
-    function onCardName (e) {
-      setCardName(e.target.value)
-    }
-
-    function deleteList (selList) {
+    function handleDeleteList (selList) {
       setListDel(selList);
       setOpenDelete(true);
     }
@@ -141,11 +139,11 @@ export default function SpacingGrid({cards}) {
                   <div className={paper.cards}>
                     {listItem.cards.map((card, index) => (
                       <Paper elevation={1} className={paper.card} key={index}>
-                        <Button onClick={ () => cardInfo(card, listItem)} className={paper.cardButton}>{card.title}</Button>
+                        <Button onClick={ () => handleCardInfo(card, listItem)} className={paper.cardButton}>{card.title}</Button>
                       </Paper>
                     ))}
                   </div>
-                  <form onSubmit={newCard} noValidate autoComplete="off">
+                  <form onSubmit={handleNewCard} noValidate autoComplete="off">
                     <TextField
                       onChange={onCardName}
                       className={paper.inputName}
@@ -154,25 +152,25 @@ export default function SpacingGrid({cards}) {
                       onKeyPress={(ev) => {
                         if (ev.key === 'Enter') {
                           ev.preventDefault();
-                          newCard(ev, cardRefs[index]);
+                          handleNewCard(ev, cardRefs[index]);
                         }
                       }} />
                     </form>
                     <div className={paper.options}>
                       <Button
-                        onClick={ () => addCard(inputRefs[index])}
+                        onClick={ () => handleAddCard(inputRefs[index])}
                         className={paper.addCard}>
                         Add new card
                       </Button>
                       <DeleteIcon
                         className={paper.deleteList}
-                        onClick={() => deleteList(listItem)}
+                        onClick={() => handleDeleteList(listItem)}
                       />
                     </div>
                   </Paper>
                 </Grid>
               ))}
-              <Button onClick={newList} className={paper.listButton}>Add new list</Button>
+              <Button onClick={handleNewList} className={paper.listButton}>Add new list</Button>
             </Grid>
           </Grid>
         </Grid>

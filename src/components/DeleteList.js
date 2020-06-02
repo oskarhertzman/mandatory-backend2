@@ -12,16 +12,11 @@ const ENDPOINT = "http://localhost:8090/api/";
 export default function DeleteDialog({list, setList, target, open, setOpen}) {
 
 
-
-
-
-
   function handleCancel () {
     setOpen(false);
   };
 
   function handleConfirm () {
-
     const url = ENDPOINT + `:${target.uuid}`;
     console.log(url)
     axios.delete(url)

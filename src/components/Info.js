@@ -44,6 +44,7 @@ export default function Info({data, setData, list, setList, open, setOpen, refer
   const openAction = Boolean(anchorEl);
   const idAction = open ? 'simple-popover' : undefined;
 
+  // Effects
 
   useEffect (() => {
     let listCopy = list;
@@ -81,6 +82,51 @@ export default function Info({data, setData, list, setList, open, setOpen, refer
     }, [data, serverRef, referance.uuid])
 
 
+    // Prop Listeners
+
+    function onTitleChange (e) {
+      let value = e.target.value;
+      setTitle(value);
+    }
+
+    function onDescChange (e) {
+      let value = e.target.value
+      setDesc(value);
+    }
+
+    function onMove (e) {
+      popupRef.current = 'move';
+      setAnchorEl(e.currentTarget);
+    }
+
+    function onCopy (e) {
+      popupRef.current = 'copy';
+      setAnchorEl(e.currentTarget);
+    }
+
+    function onDelete (e) {
+      popupRef.current = 'delete';
+      setAnchorEl(e.currentTarget);
+    }
+
+    function onSelectList (e) {
+      let selected = e.target.value;
+      let listCopy = list;
+      for (let [i,cards] of listCopy.entries()) {
+        if (selected === cards.uuid) {
+          setSelectedList(cards);
+        }
+      }
+      setDisablePos(false);
+    }
+
+    function onSelectPos (e) {
+      let selected = e.target.value;
+      setSelectedPos(selected);
+    }
+
+    // Handlers
+
     function handleClose () {
       setOpen(false);
     };
@@ -90,22 +136,9 @@ export default function Info({data, setData, list, setList, open, setOpen, refer
       setTitleEdit(true);
     }
 
-
     function handleDescEdit () {
       editDescRef.current = 'none';
       setDescEdit(true);
-    }
-
-
-    function onTitleChange (e) {
-      let value = e.target.value;
-      setTitle(value);
-    }
-
-
-    function onDescChange (e) {
-      let value = e.target.value
-      setDesc(value);
     }
 
     function handleTitleSave () {
@@ -136,41 +169,9 @@ export default function Info({data, setData, list, setList, open, setOpen, refer
       setData(prevState => ({ ...prevState, desc: prevData.desc}));
     }
 
-    function onMove (e) {
-      popupRef.current = 'move';
-      setAnchorEl(e.currentTarget);
-    }
-
-    function onCopy (e) {
-      popupRef.current = 'copy';
-      setAnchorEl(e.currentTarget);
-    }
-
-    function onDelete (e) {
-      popupRef.current = 'delete';
-      setAnchorEl(e.currentTarget);
-    }
-
     function handleClosePop () {
       setAnchorEl(null);
     }
-
-    function onSelectList (e) {
-      let selected = e.target.value;
-      let listCopy = list;
-      for (let [i,cards] of listCopy.entries()) {
-        if (selected === cards.uuid) {
-          setSelectedList(cards);
-        }
-      }
-      setDisablePos(false);
-    }
-
-    function onSelectPos (e) {
-      let selected = e.target.value;
-      setSelectedPos(selected);
-    }
-
 
     function handleMove (selList, selPos) {
       if (selList.cards.length > 0 && selPos) {
@@ -241,195 +242,195 @@ export default function Info({data, setData, list, setList, open, setOpen, refer
                 {data.title}
               </DialogTitle>}
               <Button style={{display: editTitleRef.current}} onClick={handleTitleEdit}>Edit</Button>
-          </div>
-          <DialogContent
-            className={info.root}
-            dividers>
-            <div className={info.content}>
-              <div className={info.main}>
-                <div>
-                  <div className={info.descTitle}>
-                    <h2>Description</h2>
-                  <Button style={{display: editDescRef.current}} onClick={handleDescEdit}>Edit</Button>
-              </div>
-              {descEdit ?
-                <div className={info.descContainer}>
-                  <TextField
-                    onChange={onDescChange}
-                    className={info.descInput}
-                    value={desc}
-                    placeholder=""
-                    multiline
-                    rows={2}
-                    rowsMax={5}
-                  />
-                  <div className={info.descBtnGroup}>
-                    <Button
-                      onClick={handleDescSave}
-                      className={info.descSave}
-                      variant="contained"
-                      color="primary">
-                      Save
-                    </Button>
-                    <CloseIcon
-                      onClick={handleDescCancel}
-                      className={info.descClose}
-                    />
+            </div>
+            <DialogContent
+              className={info.root}
+              dividers>
+              <div className={info.content}>
+                <div className={info.main}>
+                  <div>
+                    <div className={info.descTitle}>
+                      <h2>Description</h2>
+                      <Button style={{display: editDescRef.current}} onClick={handleDescEdit}>Edit</Button>
+                    </div>
+                    {descEdit ?
+                      <div className={info.descContainer}>
+                        <TextField
+                          onChange={onDescChange}
+                          className={info.descInput}
+                          value={desc}
+                          placeholder=""
+                          multiline
+                          rows={2}
+                          rowsMax={5}
+                        />
+                        <div className={info.descBtnGroup}>
+                          <Button
+                            onClick={handleDescSave}
+                            className={info.descSave}
+                            variant="contained"
+                            color="primary">
+                            Save
+                          </Button>
+                          <CloseIcon
+                            onClick={handleDescCancel}
+                            className={info.descClose}
+                          />
+                        </div>
+                      </div>
+                      :
+                      <Typography gutterBottom>
+                        {data.desc}
+                      </Typography> }
+                    </div>
+                    <div>
+                    </div>
                   </div>
-                </div>
-                :
-                <Typography gutterBottom>
-                  {data.desc}
-                </Typography> }
-              </div>
-              <div>
-              </div>
-            </div>
-            <div className={info.aside}>
-              <div className={info.asideHeader}>
-                <div className={info.asideTitle}>Actions</div>
-            </div>
-            <div className={info.asideContent}>
-              <div onClick={onMove}><SwapHorizIcon />Move</div>
-            <div onClick={onCopy}><RepeatIcon />Copy</div>
-          <div onClick={onDelete}><ClearIcon />Delete</div>
-      </div>
-    </div>
-    <div className={info.asideAction}>
-      <Popover
-        id={idAction}
-        open={openAction}
-        anchorEl={anchorEl}
-        onClose={handleClosePop}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'center',
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'center',
-        }}
-        >{popupRef.current === 'move' ?
-          <Typography className={info.actionContent}>
-            <div className={info.actionHeader}>
-              Move Card
-            </div>
-            <div className={info.actionBody}>
-              <p>Path</p>
-            <FormControl>
-              <InputLabel htmlFor="demo-customized-select-native">List</InputLabel>
-            <NativeSelect
-              id="demo-customized-select-native"
-              onChange={onSelectList}
-              required
-              >
-                <option aria-label="None" value="" />
-              {list.map((listName, index) => (
-                listName.uuid !== referance.uuid ?
-                <option key={index} value={listName.uuid}>{listName.list}</option> :
-                  null
-                ))}
-              </NativeSelect>
-            </FormControl>
-            <FormControl >
-              <InputLabel htmlFor="demo-customized-select-native">Position</InputLabel>
-            <NativeSelect
-              required
-              id="demo-customized-select-native"
-              onChange={onSelectPos}
-              disabled={disablePos}
-              >
-                <option aria-label="None" value="" />
-              {selectedList.cards.map((listPos, index) => (
-                <option key={index} value={index + 1}>{index + 1}</option>
-              ))}
-            </NativeSelect>
-          </FormControl>
-          <Button
-            onClick={() => handleMove(selectedList, selectedPos)}
-            className={info.actionSubmit}
-            variant="contained"
-            color="secondary">
-            Move
-          </Button>
-        </div>
-      </Typography> : null}
+                  <div className={info.aside}>
+                    <div className={info.asideHeader}>
+                      <div className={info.asideTitle}>Actions</div>
+                    </div>
+                    <div className={info.asideContent}>
+                      <div onClick={onMove}><SwapHorizIcon />Move</div>
+                      <div onClick={onCopy}><RepeatIcon />Copy</div>
+                      <div onClick={onDelete}><ClearIcon />Delete</div>
+                    </div>
+                  </div>
+                  <div className={info.asideAction}>
+                    <Popover
+                      id={idAction}
+                      open={openAction}
+                      anchorEl={anchorEl}
+                      onClose={handleClosePop}
+                      anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'center',
+                      }}
+                      transformOrigin={{
+                        vertical: 'top',
+                        horizontal: 'center',
+                      }}
+                      >{popupRef.current === 'move' ?
+                      <Typography className={info.actionContent}>
+                        <div className={info.actionHeader}>
+                          Move Card
+                        </div>
+                        <div className={info.actionBody}>
+                          <p>Path</p>
+                          <FormControl>
+                            <InputLabel htmlFor="demo-customized-select-native">List</InputLabel>
+                            <NativeSelect
+                              id="demo-customized-select-native"
+                              onChange={onSelectList}
+                              required
+                              >
+                                <option aria-label="None" value="" />
+                                {list.map((listName, index) => (
+                                  listName.uuid !== referance.uuid ?
+                                  <option key={index} value={listName.uuid}>{listName.list}</option> :
+                                  null
+                                ))}
+                              </NativeSelect>
+                            </FormControl>
+                            <FormControl >
+                              <InputLabel htmlFor="demo-customized-select-native">Position</InputLabel>
+                              <NativeSelect
+                                required
+                                id="demo-customized-select-native"
+                                onChange={onSelectPos}
+                                disabled={disablePos}
+                                >
+                                  <option aria-label="None" value="" />
+                                  {selectedList.cards.map((listPos, index) => (
+                                    <option key={index} value={index + 1}>{index + 1}</option>
+                                  ))}
+                                </NativeSelect>
+                              </FormControl>
+                              <Button
+                                onClick={() => handleMove(selectedList, selectedPos)}
+                                className={info.actionSubmit}
+                                variant="contained"
+                                color="secondary">
+                                Move
+                              </Button>
+                            </div>
+                          </Typography> : null}
 
-      {popupRef.current === 'copy' ?
-        <Typography className={info.actionContent}>
-          <div className={info.actionHeader}>
-            Copy Card
-          </div>
-          <div className={info.actionBody}>
-            <p>Path</p>
-          <FormControl>
-            <InputLabel htmlFor="demo-customized-select-native">List</InputLabel>
-          <NativeSelect
-            id="demo-customized-select-native"
-            onChange={onSelectList}
-            required
-            >
-              <option aria-label="None" value="" />
-            {list.map((listName, index) => (
-              listName.uuid !== referance.uuid ?
-              <option key={index} value={listName.uuid}>{listName.list}</option> :
-                null
-              ))}
-            </NativeSelect>
-          </FormControl>
-          <FormControl >
-            <InputLabel htmlFor="demo-customized-select-native">Position</InputLabel>
-          <NativeSelect
-            required
-            id="demo-customized-select-native"
-            onChange={onSelectPos}
-            disabled={disablePos}
-            >
-              <option aria-label="None" value="" />
-            {selectedList.cards.map((listPos, index) => (
-              <option key={index} value={index + 1}>{index + 1}</option>
-            ))}
-          </NativeSelect>
-        </FormControl>
-        <Button
-          onClick={() => handleCopy(selectedList, selectedPos)}
-          className={info.actionSubmit}
-          variant="contained"
-          color="secondary">
-          Move
-        </Button>
-      </div>
-    </Typography>
-    : null}
+                          {popupRef.current === 'copy' ?
+                          <Typography className={info.actionContent}>
+                            <div className={info.actionHeader}>
+                              Copy Card
+                            </div>
+                            <div className={info.actionBody}>
+                              <p>Path</p>
+                              <FormControl>
+                                <InputLabel htmlFor="demo-customized-select-native">List</InputLabel>
+                                <NativeSelect
+                                  id="demo-customized-select-native"
+                                  onChange={onSelectList}
+                                  required
+                                  >
+                                    <option aria-label="None" value="" />
+                                    {list.map((listName, index) => (
+                                      listName.uuid !== referance.uuid ?
+                                      <option key={index} value={listName.uuid}>{listName.list}</option> :
+                                      null
+                                    ))}
+                                  </NativeSelect>
+                                </FormControl>
+                                <FormControl >
+                                  <InputLabel htmlFor="demo-customized-select-native">Position</InputLabel>
+                                  <NativeSelect
+                                    required
+                                    id="demo-customized-select-native"
+                                    onChange={onSelectPos}
+                                    disabled={disablePos}
+                                    >
+                                      <option aria-label="None" value="" />
+                                      {selectedList.cards.map((listPos, index) => (
+                                        <option key={index} value={index + 1}>{index + 1}</option>
+                                      ))}
+                                    </NativeSelect>
+                                  </FormControl>
+                                  <Button
+                                    onClick={() => handleCopy(selectedList, selectedPos)}
+                                    className={info.actionSubmit}
+                                    variant="contained"
+                                    color="secondary">
+                                    Move
+                                  </Button>
+                                </div>
+                              </Typography>
+                              : null}
 
-    {popupRef.current === 'delete' ?
-      <Typography className={info.actionContent}>
-        <div className={info.actionHeader}>
-          Delete Card
-        </div>
-        <div className={info.actionBody}>
-          <p>Are you sure you want to delete {data.title} ?</p>
-        <Button
-          onClick={() => handleDelete()}
-          className={info.actionSubmit}
-          variant="contained"
-          color="secondary">
-          Delete
-        </Button>
-      </div>
-    </Typography>
-    : null}
-  </Popover>
-</div>
-</div>
-</DialogContent>
-<DialogSave>
-  <div className={info.date}><AccessTimeIcon className={info.dateIcon} /> <Moment format="YYYY/MM/DD HH:mm">{data.date}</Moment></div>
-<Button autoFocus onClick={handleClose} color="primary">
-  Save changes
-</Button>
-</DialogSave>
-</Dialog>
-</div>
-);
-}
+                              {popupRef.current === 'delete' ?
+                              <Typography className={info.actionContent}>
+                                <div className={info.actionHeader}>
+                                  Delete Card
+                                </div>
+                                <div className={info.actionBody}>
+                                  <p>Are you sure you want to delete {data.title} ?</p>
+                                  <Button
+                                    onClick={() => handleDelete()}
+                                    className={info.actionSubmit}
+                                    variant="contained"
+                                    color="secondary">
+                                    Delete
+                                  </Button>
+                                </div>
+                              </Typography>
+                              : null}
+                            </Popover>
+                          </div>
+                        </div>
+                      </DialogContent>
+                      <DialogSave>
+                        <div className={info.date}><AccessTimeIcon className={info.dateIcon} /> <Moment format="YYYY/MM/DD HH:mm">{data.date}</Moment></div>
+                        <Button autoFocus onClick={handleClose} color="primary">
+                          Close
+                        </Button>
+                      </DialogSave>
+                    </Dialog>
+                  </div>
+                );
+              }
